@@ -492,11 +492,13 @@ function handleSubmit(){
   const phone=document.getElementById('inp-phone').value.trim();
   const imob=getFieldValue('inp-imob','inp-imob-outro');
   const crm=getFieldValue('inp-crm','inp-crm-outro');
-  ['inp-nome','inp-email','inp-phone'].forEach(id=>document.getElementById(id).classList.remove('error'));
+  ['inp-nome','inp-email','inp-phone','inp-imob','inp-crm'].forEach(id=>document.getElementById(id).classList.remove('error'));
   let ok=true;
   if(!nome){document.getElementById('inp-nome').classList.add('error');ok=false;}
   if(!email||!email.includes('@')){document.getElementById('inp-email').classList.add('error');ok=false;}
   if(!phone){document.getElementById('inp-phone').classList.add('error');ok=false;}
+  if(!document.getElementById('inp-imob').value){document.getElementById('inp-imob').classList.add('error');ok=false;}
+  if(!document.getElementById('inp-crm').value){document.getElementById('inp-crm').classList.add('error');ok=false;}
   if(!ok||!cur)return;
   const btn=document.getElementById('btn-submit');
   btn.disabled=true;btn.textContent='Registrando...';
