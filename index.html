@@ -58,10 +58,12 @@ body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-d
 .form{display:flex;flex-direction:column;gap:10px;}
 .field{display:flex;flex-direction:column;gap:4px;}
 .field label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;}
-.field input{height:42px;padding:0 12px;font-family:'Outfit',sans-serif;font-size:14px;color:var(--text);background:#f8fafc;border:1px solid var(--border);border-radius:8px;outline:none;transition:border-color .15s,box-shadow .15s,background .15s;}
+.field input,.field select{height:42px;padding:0 12px;font-family:'Outfit',sans-serif;font-size:14px;color:var(--text);background:#f8fafc;border:1px solid var(--border);border-radius:8px;outline:none;transition:border-color .15s,box-shadow .15s,background .15s;width:100%;}
+.field select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-color:#f8fafc;padding-right:32px;cursor:pointer;}
 .field input::placeholder{color:var(--text3);}
-.field input:focus{border-color:var(--navy2);box-shadow:0 0 0 3px rgba(13,45,107,.08);background:var(--white);}
-.field input.error{border-color:var(--red);box-shadow:0 0 0 3px rgba(220,38,38,.07);}
+.field input:focus,.field select:focus{border-color:var(--navy2);box-shadow:0 0 0 3px rgba(13,45,107,.08);background:var(--white);}
+.field input.error,.field select.error{border-color:var(--red);box-shadow:0 0 0 3px rgba(220,38,38,.07);}
+.extra-input{display:none;margin-top:6px;}
 .btn{margin-top:4px;height:44px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s,transform .1s;}
 .btn:hover{background:var(--navy2);}
 .btn:active{transform:scale(.98);}
@@ -194,6 +196,48 @@ body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-d
         <div class="field"><label for="inp-nome">Nome</label><input type="text" id="inp-nome" placeholder="Como você se chama?" autocomplete="name"/></div>
         <div class="field"><label for="inp-email">E-mail</label><input type="email" id="inp-email" placeholder="seu@email.com" autocomplete="email"/></div>
         <div class="field"><label for="inp-phone">WhatsApp</label><input type="tel" id="inp-phone" placeholder="(11) 99999-9999" autocomplete="tel"/></div>
+        <div class="field">
+          <label for="inp-imob">Imobiliária</label>
+          <select id="inp-imob" onchange="toggleExtra('inp-imob','inp-imob-outro')">
+            <option value="">Selecione sua imobiliária…</option>
+            <option>Coelho da Fonseca</option>
+            <option>EXP Global Brasil</option>
+            <option>Garóni Imóveis</option>
+            <option>Keller Williams (KW)</option>
+            <option>Leardi</option>
+            <option>Lopes</option>
+            <option>Pilar</option>
+            <option>RE/MAX</option>
+            <option>Scheid</option>
+            <option>SH Prime</option>
+            <option>Urban Grupo</option>
+            <option>Zi Imóveis</option>
+            <option value="autonomo">Autônomo</option>
+            <option value="outro">Outra imobiliária</option>
+          </select>
+          <input type="text" id="inp-imob-outro" class="extra-input" placeholder="Nome da sua imobiliária"/>
+        </div>
+        <div class="field">
+          <label for="inp-crm">CRM que utiliza (além da Nonstop)</label>
+          <select id="inp-crm" onchange="toggleExtra('inp-crm','inp-crm-outro')">
+            <option value="">Selecione seu CRM…</option>
+            <option>HubSpot</option>
+            <option>Ilist</option>
+            <option>ImobiBrazil</option>
+            <option>Imobzi</option>
+            <option>Jetimob</option>
+            <option>Kenlo</option>
+            <option>NIDO</option>
+            <option value="nonstop">Apenas Nonstop</option>
+            <option>Não uso outro CRM</option>
+            <option>Pilar</option>
+            <option>Univen</option>
+            <option>Vista CRM</option>
+            <option>Voa Corretor</option>
+            <option value="outro">Outro</option>
+          </select>
+          <input type="text" id="inp-crm-outro" class="extra-input" placeholder="Qual CRM você utiliza?"/>
+        </div>
         <button class="btn" id="btn-submit" onclick="handleSubmit()">Entrar no treinamento →</button>
       </div>
       <div class="no-t" id="no-training" style="display:none;">
@@ -423,10 +467,31 @@ function tickCountdown(){
   document.getElementById('cd-s').textContent=pad(diff%60);
 }
 
+function toggleExtra(selId,inputId){
+  const sel=document.getElementById(selId);
+  const inp=document.getElementById(inputId);
+  const show=sel.value==='outro';
+  inp.style.display=show?'block':'none';
+  if(show)inp.focus();
+}
+
+function getFieldValue(selId,inputId){
+  const sel=document.getElementById(selId);
+  if(sel.value==='outro'){
+    const txt=document.getElementById(inputId).value.trim();
+    return txt||'Outro';
+  }
+  if(sel.value==='autonomo')return'Autônomo';
+  if(sel.value==='nonstop')return'Apenas Nonstop';
+  return sel.value||'';
+}
+
 function handleSubmit(){
   const nome=document.getElementById('inp-nome').value.trim();
   const email=document.getElementById('inp-email').value.trim();
   const phone=document.getElementById('inp-phone').value.trim();
+  const imob=getFieldValue('inp-imob','inp-imob-outro');
+  const crm=getFieldValue('inp-crm','inp-crm-outro');
   ['inp-nome','inp-email','inp-phone'].forEach(id=>document.getElementById(id).classList.remove('error'));
   let ok=true;
   if(!nome){document.getElementById('inp-nome').classList.add('error');ok=false;}
@@ -439,7 +504,7 @@ function handleSubmit(){
   fetch('https://script.google.com/macros/s/AKfycbzb59J14aFF0M0kxHANd6SKjdSfT0Umx7uoIJ7ouQeWY7iiLT2aP6lAyAaBm0mf7UfD/exec',{
     method:'POST',mode:'no-cors',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({timestamp:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'}),nome,email,whatsapp:phone,treinamento:cur.name,horario:fmt(cur),dia:DAYS[c.day]})
+    body:JSON.stringify({timestamp:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'}),nome,email,whatsapp:phone,imobiliaria:imob,crm,treinamento:cur.name,horario:fmt(cur),dia:DAYS[c.day]})
   }).catch(()=>{});
   document.getElementById('training-section').style.display='none';
   document.getElementById('success-section').style.display='block';
